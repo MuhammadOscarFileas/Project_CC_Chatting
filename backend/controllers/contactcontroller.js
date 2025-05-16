@@ -1,0 +1,105 @@
+import Contact from "../models/contactmodel.js";
+import User from "../models/usermodel.js";
+import { Op } from "sequelize";
+
+// GET My Contacts
+export const getMyContacts = async (req, res) => {
+    try {
+        const myId = req.user.id_user; // misal ambil dari middleware auth
+        const contacts = await Contact.findAll({
+            where: {
+                [Op.or]: [
+                    { id_useradder: myId },
+                    { id_userreceiver: myId }
+                ]
+            },
+            include: [
+                {
+                    model: User,
+                    as: 'Receiver',
+                    attributes: ['id_user', 'username', 'nickname', 'email']
+                },
+                {
+                    model: User,
+                    as: 'Adder',
+                    attributes: ['id_user', 'username', 'nickname', 'email']
+                }
+            ]
+        });
+
+        res.status(200).json(contacts);
+    } catch (error) {
+        res.status(500).json({ msg: "Gagal mengambil kontak", error: error.message });
+    }
+};
+
+// ADD Contact by Username
+export const addContact = async (req, res) => {
+    try {
+        const myId = req.user.id_user;
+        const { username, nickname } = req.body;
+
+        const userToAdd = await User.findOne({ where: { username } });
+        if (!userToAdd) {
+            return res.status(404).json({ msg: "Username tidak ditemukan" });
+        }
+
+        if (userToAdd.id_user === myId) {
+            return res.status(400).json({ msg: "Tidak bisa menambahkan diri sendiri sebagai kontak" });
+        }
+
+        // Cek apakah kontak sudah ada (baik adder/receiver)
+        const existing = await Contact.findOne({
+            where: {
+                [Op.or]: [
+                    { id_useradder: myId, id_userreceiver: userToAdd.id_user },
+                    { id_useradder: userToAdd.id_user, id_userreceiver: myId }
+                ]
+            }
+        });
+
+        if (existing) {
+            return res.status(400).json({ msg: "Kontak sudah ada" });
+        }
+
+        const newContact = await Contact.create({
+            id_useradder: myId,
+            id_userreceiver: userToAdd.id_user,
+            nickname: nickname || userToAdd.nickname
+        });
+
+        res.status(201).json({ msg: "Kontak berhasil ditambahkan", contact: newContact });
+    } catch (error) {
+        res.status(500).json({ msg: "Gagal menambahkan kontak", error: error.message });
+    }
+};
+
+// Update Contact Nickname
+export const updateContact = async (req, res) => {
+    try {
+        const contact = await Contact.findByPk(req.params.id);
+        if (!contact) return res.status(404).json({ msg: "Kontak tidak ditemukan" });
+
+        await Contact.update({ nickname: req.body.nickname }, {
+            where: { id_contact: req.params.id }
+        });
+        res.status(200).json({ msg: "Nickname kontak diperbarui" });
+    } catch (error) {
+        res.status(500).json({ msg: "Gagal memperbarui kontak", error: error.message });
+    }
+};
+
+// Delete Contact
+export const deleteContact = async (req, res) => {
+    try {
+        const contact = await Contact.findByPk(req.params.id);
+        if (!contact) return res.status(404).json({ msg: "Kontak tidak ditemukan" });
+
+        await Contact.destroy({
+            where: { id_contact: req.params.id }
+        });
+        res.status(200).json({ msg: "Kontak berhasil dihapus" });
+    } catch (error) {
+        res.status(500).json({ msg: "Gagal menghapus kontak", error: error.message });
+    }
+};
