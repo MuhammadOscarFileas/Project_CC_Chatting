@@ -6,6 +6,5 @@ const db = new Sequelize("chatting", "root", "",{
     logging: console.log,
 });
 
-// crud api = nama db
 
 export default db;

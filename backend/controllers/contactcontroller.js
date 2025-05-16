@@ -2,10 +2,11 @@ import Contact from "../models/contactmodel.js";
 import User from "../models/usermodel.js";
 import { Op } from "sequelize";
 
-// GET My Contacts
+// GET My Contacts (pakai param :id)
 export const getMyContacts = async (req, res) => {
     try {
-        const myId = req.user.id_user; // misal ambil dari middleware auth
+        const myId = req.params.id; 
+
         const contacts = await Contact.findAll({
             where: {
                 [Op.or]: [
@@ -33,18 +34,17 @@ export const getMyContacts = async (req, res) => {
     }
 };
 
-// ADD Contact by Username
+// ADD Contact by Username (pakai body: id_user + username)
 export const addContact = async (req, res) => {
     try {
-        const myId = req.user.id_user;
-        const { username, nickname } = req.body;
+        const { id_user, username, nickname } = req.body;
 
         const userToAdd = await User.findOne({ where: { username } });
         if (!userToAdd) {
             return res.status(404).json({ msg: "Username tidak ditemukan" });
         }
 
-        if (userToAdd.id_user === myId) {
+        if (userToAdd.id_user === id_user) {
             return res.status(400).json({ msg: "Tidak bisa menambahkan diri sendiri sebagai kontak" });
         }
 
@@ -52,8 +52,8 @@ export const addContact = async (req, res) => {
         const existing = await Contact.findOne({
             where: {
                 [Op.or]: [
-                    { id_useradder: myId, id_userreceiver: userToAdd.id_user },
-                    { id_useradder: userToAdd.id_user, id_userreceiver: myId }
+                    { id_useradder: id_user, id_userreceiver: userToAdd.id_user },
+                    { id_useradder: userToAdd.id_user, id_userreceiver: id_user }
                 ]
             }
         });
@@ -63,7 +63,7 @@ export const addContact = async (req, res) => {
         }
 
         const newContact = await Contact.create({
-            id_useradder: myId,
+            id_useradder: id_user,
             id_userreceiver: userToAdd.id_user,
             nickname: nickname || userToAdd.nickname
         });
