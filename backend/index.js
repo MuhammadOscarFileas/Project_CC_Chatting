@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import db from "./config/database.js";
 import UserRoute from "./route/UserRoute.js";
 import ContactRoute from "./route/ContactRoute.js";
@@ -11,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json()); // parse JSON body
 
 // Cek koneksi DB
