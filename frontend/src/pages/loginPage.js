@@ -1,27 +1,39 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
   const info = searchParams.get("info");
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
       const response = await axios.post('http://localhost:5000/users/login', {
         username,
         password
       });
-      // Simpan token atau redirect di sini
-      console.log(response.data);
+      
+      // Simpan data user di session storage (tanpa token)
+      sessionStorage.setItem('userData', JSON.stringify(response.data.user));
+      
       setMsg('Login berhasil!');
+      
+      // Redirect ke ChatPage
+      navigate('/chat');
+      
     } catch (error) {
-      setMsg('Username/Password salah');
+      setMsg(error.response?.data?.msg || 'Username/Password salah');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,7 +102,13 @@ const LoginPage = () => {
               <p>Belum punya akun? <a href="/register">Buat akun</a></p>
               <br /><br /><br />
               <div className="d-grid gap-2">
-                <button type="submit" className="btn btn-primary">Login</button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Loading...' : 'Login'}
+                </button>
               </div>
             </form>
           </div>
