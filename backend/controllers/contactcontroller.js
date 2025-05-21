@@ -28,11 +28,28 @@ export const getMyContacts = async (req, res) => {
             ]
         });
 
-        res.status(200).json(contacts);
+        // Transformasi data agar frontend mudah pakai
+        const result = contacts.map(contact => {
+            const isAdder = contact.id_useradder == myId;
+            const targetUser = isAdder ? contact.Receiver : contact.Adder;
+
+            return {
+                id_contact: contact.id_contact,
+                nickname: contact.nickname || targetUser.nickname,
+                user: {
+                    id_user: targetUser.id_user,
+                    username: targetUser.username,
+                    email: targetUser.email
+                }
+            };
+        });
+
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ msg: "Gagal mengambil kontak", error: error.message });
     }
 };
+
 
 // ADD Contact by Username (pakai body: id_user + username)
 export const addContact = async (req, res) => {
