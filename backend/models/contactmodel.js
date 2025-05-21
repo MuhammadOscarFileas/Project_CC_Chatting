@@ -21,7 +21,8 @@ const Contact = db.define("Contact", {
         type: DataTypes.STRING
     }
 }, {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false
 });
 
 export default Contact;
