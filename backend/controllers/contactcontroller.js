@@ -4,8 +4,10 @@ import { Op } from "sequelize";
 
 // GET My Contacts (pakai param :id)
 export const getMyContacts = async (req, res) => {
+    const myId = req.params.userId; 
     try {
-        const myId = req.params.id; 
+
+        console.log(myId + "2");
 
         const contacts = await Contact.findAll({
             where: {
@@ -46,7 +48,7 @@ export const getMyContacts = async (req, res) => {
 
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ msg: "Gagal mengambil kontak", error: error.message });
+        res.status(500).json({ msg: "Gagal mengambil kontak" + myId, error: error.message });
     }
 };
 

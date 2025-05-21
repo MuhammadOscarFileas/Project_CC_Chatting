@@ -31,6 +31,3 @@ const Chat = db.define("Chat", {
 
 export default Chat;
 
-(async () => {
-    await db.sync();
-})();

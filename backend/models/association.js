@@ -12,4 +12,7 @@ User.hasMany(Contact, { foreignKey: 'id_userreceiver', as: 'ReceivedContacts' })
 Contact.belongsTo(User, { foreignKey: 'id_useradder', as: 'Adder' });
 Contact.belongsTo(User, { foreignKey: 'id_userreceiver', as: 'Receiver' });
 
+console.log(Contact.associations);
+
+
 export { User, Chat, Contact };

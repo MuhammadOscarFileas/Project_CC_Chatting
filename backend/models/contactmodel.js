@@ -26,7 +26,3 @@ const Contact = db.define("Contact", {
 });
 
 export default Contact;
-
-(async () => {
-    await db.sync();
-})();

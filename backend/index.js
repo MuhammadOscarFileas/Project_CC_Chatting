@@ -1,28 +1,21 @@
 import express from "express";
 import cors from "cors";
 import db from "./config/database.js";
+
+// Import routes
 import UserRoute from "./route/UserRoute.js";
 import ContactRoute from "./route/ContactRoute.js";
 import ChatRoute from "./route/ChatRoute.js";
 
-// (Opsional) import middleware Auth jika ada
-// import verifyToken from "./middleware/AuthMiddleware.js";
+// Import semua relasi antar model
+import "./models/association.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({ origin: "http://localhost:3000" }));
-app.use(express.json()); // parse JSON body
-
-// Cek koneksi DB
-try {
-    await db.authenticate();
-    console.log("Database connected...");
-    await db.sync(); // akan buat tabel jika belum ada
-} catch (error) {
-    console.error("Database connection error:", error);
-}
+app.use(express.json());
 
 // Routing
 app.use("/users", UserRoute);
@@ -31,10 +24,24 @@ app.use("/chats", ChatRoute);
 
 // Default route
 app.get("/", (req, res) => {
-    res.json({ msg: "Welcome to the Chat App API" });
+  res.json({ msg: "Welcome to the Chat App API" });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Jalankan server setelah koneksi DB berhasil
+const startServer = async () => {
+  try {
+    await db.authenticate();
+    console.log("✅ Database connected...");
+
+    await db.sync(); // Sinkronisasi model
+    console.log("✅ Database synced...");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Database connection error:", error);
+  }
+};
+
+startServer();
