@@ -44,6 +44,8 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (!contactId || !currentUser) return;
+        
+        // Function to fetch messages
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(
@@ -54,7 +56,15 @@ const ChatPage = () => {
                 console.error('Error fetching messages:', error);
             }
         };
+        
+        // Fetch messages immediately
         fetchMessages();
+        
+        // Set up polling every 3 seconds to get new messages
+        const intervalId = setInterval(fetchMessages, 3000);
+        
+        // Clean up the interval when component unmounts or contactId changes
+        return () => clearInterval(intervalId);
     }, [contactId, currentUser]);
 
     useEffect(() => {
@@ -132,6 +142,19 @@ const ChatPage = () => {
         }
     };
 
+    // Fungsi untuk mendapatkan nama display kontak yang benar
+    const getContactDisplayName = (contact) => {
+        // Cek apakah current user adalah receiver
+        if (currentUser.id_user === contact.id_userreceiver) {
+            // Jika current user adalah receiver, tampilkan nama dari adder
+            return contact.Adder?.nickname || contact.Adder?.username || 'Unknown';
+        } else {
+            // Jika current user adalah adder, tampilkan nickname yang ditentukan saat menambahkan kontak
+            // atau username/nickname dari receiver jika tidak ada nickname khusus
+            return contact.nickname || contact.Receiver?.nickname || contact.Receiver?.username || 'Unknown';
+        }
+    };
+
     if (!currentUser) {
         return <div>Loading...</div>;
     }
@@ -153,11 +176,8 @@ const ChatPage = () => {
                             const targetId = contact.id_userreceiver === currentUser.id_user
                                 ? contact.id_useradder
                                 : contact.id_userreceiver;
-                            const isActive = contactId === targetId.toString();
-                            const contactUsername = contact.nickname ||
-                                (contact.id_userreceiver === currentUser.id_user
-                                    ? contact.Adder?.username
-                                    : contact.Receiver?.username);
+                            const isActive = contactId === String(targetId);
+                            const contactDisplayName = getContactDisplayName(contact);
 
                             return (
                                 <button
@@ -166,7 +186,7 @@ const ChatPage = () => {
                                     onClick={() => handleContactClick(targetId)}
                                 >
                                     <div className="d-flex w-100 justify-content-between">
-                                        <h6 className="mb-1">{contactUsername || 'Unknown'}</h6>
+                                        <h6 className="mb-1">{contactDisplayName}</h6>
                                         <small>2m</small>
                                     </div>
                                 </button>
