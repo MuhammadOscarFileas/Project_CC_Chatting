@@ -26,7 +26,8 @@ const Chat = db.define("Chat", {
         defaultValue: DataTypes.NOW
     }
 }, {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false
 });
 
 export default Chat;

@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 // GET semua chat antara dua user
-router.get("/:user1Id/:user2Id", getChatsBetweenUsers);
+router.get("/:user1/:user2", getChatsBetweenUsers);
 
 // Kirim pesan
 router.post("/send-message", sendMessage);
