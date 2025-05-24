@@ -4,39 +4,51 @@ import { Op } from "sequelize";
 
 // GET My Contacts (pakai param :id)
 export const getMyContacts = async (req, res) => {
-  try {
-    const myId = req.params.userId;
+    try {
+        // Ambil ID user dari parameter URL. Pastikan nama parameter di route Anda
+        // cocok dengan 'userId' atau sesuaikan 'req.params.userId' ini.
+        const myId = req.params.userId;
 
-    const contacts = await Contact.findAll({
-      where: {
-        id_useradder: myId // hanya yang dia tambahkan
-      },
-      include: [
-        {
-          model: User,
-          as: "Receiver",
-          attributes: ["id_user", "username", "nickname", "email"]
-        }
-      ]
-    });
+        const contacts = await Contact.findAll({
+            where: {
+                id_useradder: myId // Hanya kontak yang dia tambahkan
+            },
+            include: [
+                {
+                    model: User,
+                    as: "ReceiverContact", // <-- UBAH KE ALIAS YANG BENAR
+                    attributes: ["id_user", "username", "nickname", "email"]
+                }
+            ]
+        });
 
-    const result = contacts.map(contact => {
-      const target = contact.Receiver;
-      return {
-        id_contact: contact.id_contact,
-        nickname: contact.nickname,
-        user: {
-          id_user: target.id_user,
-          username: target.username,
-          email: target.email
-        }
-      };
-    });
+        // Mapping hasil untuk disesuaikan dengan format yang mungkin diharapkan frontend
+        const result = contacts.map(contact => {
+            // Periksa jika 'ReceiverContact' ada sebelum mengaksesnya
+            if (!contact.ReceiverContact) {
+                console.warn(`Kontak ${contact.id_contact} tidak memiliki ReceiverContact.`);
+                return null; // Atau handle sesuai kebutuhan
+            }
 
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ msg: "Gagal mengambil kontak", error: error.message });
-  }
+            const target = contact.ReceiverContact; // <-- GUNAKAN NAMA ALIAS YANG BENAR
+
+            return {
+                id_contact: contact.id_contact,
+                nickname: contact.nickname,
+                user: {
+                    id_user: target.id_user,
+                    username: target.username,
+                    email: target.email
+                }
+            };
+        }).filter(item => item !== null); // Hapus item null jika ada
+
+        res.status(200).json(result);
+    } catch (error) {
+        // Tambahkan console.error untuk debugging di backend
+        console.error("Error fetching contacts:", error);
+        res.status(500).json({ msg: "Gagal mengambil kontak", error: error.message });
+    }
 };
 
 

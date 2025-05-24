@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import db from "./config/database.js";
-
 // Import routes
 import UserRoute from "./route/UserRoute.js";
 import ContactRoute from "./route/ContactRoute.js";

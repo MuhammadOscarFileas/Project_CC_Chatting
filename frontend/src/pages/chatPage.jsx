@@ -369,7 +369,7 @@ const ChatPage = () => {
                         <h5 className="mb-0">Chat Application</h5>
                     </div>
                     <div className="user-profile my-3 text-center">
-                        <h6>Welcome, {currentUser.nickname || currentUser.username}!</h6>
+                        <h6>Welcome, {currentUser.username}!</h6>
                         <button className="btn btn-sm btn-outline-light" onClick={handleOpenEditModal}>
                             ⚙️ Edit Profile
                         </button>
