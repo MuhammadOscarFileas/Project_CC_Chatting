@@ -1,144 +1,359 @@
 body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f0f2f5;
-      height: 100vh;
-      margin: 0;
-    }
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f2f5;
+  height: 100vh;
+  margin: 0;
+}
 
-    .chat-container {
-      height: 100%;
-      background-color: #fff;
-      border-radius: 0;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-    }
+.chat-container {
+  height: 100%;
+  background-color: #fff;
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
 
-    .chat-sidebar {
-      background-color: #f0f2f5;
-      border-right: 1px solid #e6e6e6;
-      overflow-y: auto;
-      flex: 0 0 300px;
-      display: flex;
-      flex-direction: column;
-    }
+.chat-sidebar {
+  background-color: #f0f2f5;
+  border-right: 1px solid #e6e6e6;
+  overflow-y: auto;
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+}
 
-    .chat-sidebar-header {
-      padding: 20px;
-      border-bottom: 1px solid #e6e6e6;
-      display: flex;
-      align-items: center;
-    }
+.chat-sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  align-items: center;
+}
 
-    .chat-sidebar-header img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
+.chat-sidebar-header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
 
-    .chat-sidebar .list-group-item {
-      border: none;
-      background-color: transparent;
-      cursor: pointer;
-    }
+.chat-sidebar .list-group-item {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
 
-    .chat-sidebar .list-group-item.active {
-      background-color: #e6e6e6;
-    }
+.chat-sidebar .list-group-item.active {
+  background-color: #e6e6e6;
+}
 
-    .chat-sidebar-footer {
-      padding: 20px;
-      border-top: 1px solid #e6e6e6;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.chat-sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #e6e6e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .chat-sidebar-footer a {
-      color: #007bff;
-      text-decoration: none;
-    }
+.chat-sidebar-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
 
-    .chat-content {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 0 !important;
-    }
+.chat-content {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
 
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
 
-    .chat-input {
-      background-color: #f0f2f5;
-      padding: 15px;
-      border-top: 1px solid #e6e6e6;
-      position: sticky;
-      bottom: 0;
-      width: 100%;
-    }
+.chat-input {
+  background-color: #f0f2f5;
+  padding: 15px;
+  border-top: 1px solid #e6e6e6;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
 
-    .chat-input form {
-      display: flex;
-      gap: 10px;
-    }
+.chat-input form {
+  display: flex;
+  gap: 10px;
+}
 
-    .chat-input textarea {
-      resize: none;
-      height: 50px;
-      padding: 12px;
-    }
+.chat-input textarea {
+  resize: none;
+  height: 50px;
+  padding: 12px;
+}
 
-    .chat-input button {
-      align-self: flex-end;
-    }
+.chat-input button {
+  align-self: flex-end;
+}
 
-    .chat-message {
-      display: flex;
-      margin-bottom: 10px;
-      flex-direction: column;
-    }
+.chat-message {
+  display: flex;
+  margin-bottom: 10px;
+  flex-direction: column;
+}
 
-    .chat-message.sent {
-      align-items: flex-end;
-    }
+.chat-message.sent {
+  align-items: flex-end;
+}
 
-    .chat-message .message-bubble {
-      background-color: #007bff;
-      color: #fff;
-      padding: 10px;
-      border-radius: 15px;
-      max-width: 70%;
-    }
+.chat-message .message-bubble {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  border-radius: 15px;
+  max-width: 70%;
+}
 
-    .chat-message.sent .message-bubble {
-      background-color: #e6e6e6;
-      color: #333;
-      max-width : 70%;
-    }
+.chat-message.sent .message-bubble {
+  background-color: #e6e6e6;
+  color: #333;
+  max-width: 70%;
+}
 
-    .chat-input {
-      background-color: #f0f2f5;
-      padding: 10px;
-      border-top: 1px solid #e6e6e6;
-    }
+.chat-input {
+  background-color: #f0f2f5;
+  padding: 10px;
+  border-top: 1px solid #e6e6e6;
+}
 
-    .chat-input .input-group {
-      max-width: 500px;
-      margin: 0 auto;
-    }
+.chat-input .input-group {
+  max-width: 500px;
+  margin: 0 auto;
+}
 
-    .add-contact {
-      background-color: #f0f2f5;
-      border-top: 1px solid #e6e6e6;
-      padding: 10px;
-    }
+.add-contact {
+  background-color: #f0f2f5;
+  border-top: 1px solid #e6e6e6;
+  padding: 10px;
+}
 
-    .add-contact .input-group {
-      max-width: 500px;
-      margin: 0 auto;
-    }
+.add-contact .input-group {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.message-bubble {
+  position: relative;
+  /* ... gaya bubble Anda yang sudah ada ... */
+  padding-right: 55px;
+  /* Beri ruang untuk tombol */
+}
+
+.message-actions {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: none;
+  /* Sembunyikan secara default */
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 2px;
+}
+
+.chat-message.sent .message-bubble:hover .message-actions {
+  display: inline-flex;
+  /* Tampilkan saat hover */
+}
+
+.message-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
+
+.message-actions button:hover {
+  opacity: 1;
+}
+
+.message-bubble.edit-mode {
+  padding-right: 10px;
+  /* Reset padding jika edit */
+}
+
+.message-bubble.edit-mode textarea {
+  width: 100%;
+  min-height: 50px;
+}
+
+/* ... CSS Anda yang sudah ada ... */
+
+.chat-message {
+    display: flex;
+    margin-bottom: 10px;
+    flex-direction: column;
+}
+
+.chat-message.sent {
+    align-items: flex-end; /* Pesan Anda rata kanan */
+}
+
+/* Biarkan bubble seperti semula, tanpa padding aneh */
+.message-bubble {
+    background-color: #007bff; /* Bubble biasa (biru) */
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word; /* Agar teks panjang turun */
+    margin-bottom: 3px; /* Jarak kecil ke footer */
+}
+
+.chat-message.sent .message-bubble {
+    background-color: #e6e6e6; /* Bubble Anda (abu-abu) */
+    color: #333;
+}
+
+/* Gaya untuk form edit */
+.message-bubble.edit-mode {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.message-bubble.edit-mode textarea {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Gaya untuk footer pesan (timestamp + aksi) */
+.message-footer {
+    display: flex;
+    align-items: center;
+    font-size: 0.7em; /* Ukuran teks kecil */
+    color: #888; /* Warna abu-abu */
+    margin-right: 5px; /* Sedikit jarak kanan (untuk pesan diterima) */
+    margin-left: 5px; /* Sedikit jarak kiri (untuk pesan terkirim) */
+}
+
+.chat-message.sent .message-footer {
+    justify-content: flex-end; /* Rata kanan untuk pesan terkirim */
+}
+
+/* Gaya untuk tombol aksi (Edit/Hapus) */
+.message-actions-bottom {
+    display: flex;
+    align-items: center;
+    margin-right: 5px; /* Jarak antara tombol dan timestamp */
+}
+
+.message-actions-bottom button {
+    background: none;
+    border: none;
+    color: #666; /* Warna tombol lebih gelap sedikit */
+    cursor: pointer;
+    padding: 0;
+    font-size: 1em; /* Sama dengan timestamp */
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+.message-actions-bottom button:hover {
+    color: #007bff; /* Warna biru saat hover */
+    text-decoration: underline;
+    opacity: 1;
+}
+
+.message-actions-bottom span {
+    margin: 0 3px; /* Jarak untuk titik pemisah */
+    color: #ccc;
+}
+
+/* --- CSS TAMBAHAN UNTUK AKSI KONTAK --- */
+
+/* Wrapper untuk setiap item kontak di sidebar */
+.contact-item-wrapper {
+    position: relative; /* Diperlukan agar item bisa di-hover */
+}
+
+/* Pastikan item list bisa menampung tombol */
+.contact-item-wrapper .list-group-item .d-flex {
+    width: 100%;
+}
+
+/* Bagian nama kontak agar mengisi ruang */
+.contact-item-wrapper .list-group-item .contact-name {
+    flex-grow: 1; /* Biarkan nama mengisi ruang */
+    cursor: pointer; /* Menunjukkan bisa diklik untuk chat */
+    margin-bottom: 0 !important; /* Hapus margin bawah jika ada */
+}
+
+/* Container untuk tombol aksi (Edit/Hapus) kontak */
+.contact-actions {
+    display: none; /* Sembunyikan secara default */
+    margin-left: 10px; /* Jarak dari nama */
+    flex-shrink: 0; /* Agar tombol tidak mengecil */
+}
+
+/* Tampilkan tombol aksi saat mouse hover di atas item kontak */
+.contact-item-wrapper:hover .contact-actions {
+    display: inline-flex; /* Tampilkan sebagai flex */
+    align-items: center; /* Tengahkan tombol */
+}
+
+/* Gaya dasar tombol aksi kontak (ikon) */
+.contact-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 4px; /* Sedikit padding */
+    font-size: 0.9em; /* Ukuran ikon/teks */
+    opacity: 0.6; /* Buat agak transparan */
+    color: #333; /* Warna ikon */
+}
+
+/* Efek hover pada tombol aksi */
+.contact-actions button:hover {
+    opacity: 1; /* Tampilkan penuh */
+    color: #007bff; /* Warna biru */
+}
+
+/* Pastikan tombol aksi juga terlihat bagus di item yang aktif */
+.contact-item-wrapper .list-group-item.active .contact-actions button {
+    color: #333; /* Atau putih jika latar aktif sangat gelap */
+}
+.contact-item-wrapper .list-group-item.active .contact-actions button:hover {
+    color: #0056b3; /* Atau warna hover lain untuk item aktif */
+}
+
+/* --- CSS TAMBAHAN UNTUK EDIT KONTAK --- */
+
+/* Gaya untuk form edit kontak (menggantikan item biasa) */
+.editing-contact {
+    display: flex; /* Agar input & tombol sejajar */
+    align-items: center; /* Tengahkan */
+    width: 100%;
+    padding: 0.75rem 1rem; /* Sesuaikan padding dengan item list */
+    background-color: #fff; /* Latar putih saat edit */
+    border: none; /* Hapus border default */
+    box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Opsional: bayangan */
+}
+
+/* Input field untuk nickname baru */
+.editing-contact input {
+    flex-grow: 1; /* Biarkan input mengisi ruang */
+    margin-right: 5px; /* Jarak ke tombol */
+    /* Dianjurkan menggunakan class 'form-control-sm' dari Bootstrap */
+}
+
+/* Tombol Simpan (✓) dan Batal (X) */
+.editing-contact button {
+    margin-left: 5px; /* Jarak antar tombol */
+    flex-shrink: 0;
+    /* Dianjurkan menggunakan class 'btn-sm' dari Bootstrap */
+}
