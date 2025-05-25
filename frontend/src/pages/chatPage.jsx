@@ -62,7 +62,7 @@ useEffect(() => {
 
     // 2. Fetch Contacts (Tetap sama)
     const fetchContacts = useCallback(async () => {
-        if (!currentUser) return;
+        if (!currentUser|| !accessToken) return;
         try {
             const response = await axios.get(
                 `http://localhost:5000/contacts/${currentUser.id_user}`, {
