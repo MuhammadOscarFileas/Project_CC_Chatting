@@ -127,14 +127,24 @@ export const logout = async (req, res) => {
 };
 
 // UPDATE USER
+// UPDATE USER
 export const updateUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
 
-    await User.update(req.body, {
+    const updateData = { ...req.body };
+
+    // Jika ada password baru, hash dulu sebelum update
+    if (updateData.password) {
+      const hashedPassword = await bcrypt.hash(updateData.password, 10);
+      updateData.password = hashedPassword;
+    }
+
+    await User.update(updateData, {
       where: { id_user: req.params.id }
     });
+
     res.status(200).json({ message: "User berhasil diperbarui" });
   } catch (error) {
     res.status(500).json({ message: "Gagal memperbarui user", error: error.message });
