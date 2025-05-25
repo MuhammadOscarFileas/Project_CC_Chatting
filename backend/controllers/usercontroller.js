@@ -1,83 +1,157 @@
 import User from "../models/usermodel.js";
 import { Op } from "sequelize";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-// Register
+// REGISTER
 export const register = async (req, res) => {
-    try {
-        const { username, password, email, nickname } = req.body;
+  const { username, password, email, nickname } = req.body;
 
-        // Cek jika username atau email sudah ada
-        const existing = await User.findOne({
-            where: {
-                [Op.or]: [{ username }, { email }]
-            }
-        });
-        if (existing) {
-            return res.status(400).json({ msg: "Username atau email sudah digunakan" });
-        }
+//   if (password !== confirm_password) {
+//     return res.status(400).json({ message: "Password tidak sama" });
+//   }
 
-        const user = await User.create({ username, password, email, nickname });
-        res.status(201).json({ msg: "Registrasi berhasil", user });
-    } catch (error) {
-        res.status(500).json({ msg: "Terjadi kesalahan server", error: error.message });
+  try {
+    const existing = await User.findOne({
+      where: {
+        [Op.or]: [{ username }, { email }]
+      }
+    });
+    if (existing) {
+      return res.status(400).json({ message: "Username atau email sudah digunakan" });
     }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      username,
+      email,
+      nickname,
+      password: hashPassword
+    });
+
+    res.status(201).json({ message: "Registrasi berhasil", user });
+  } catch (error) {
+    res.status(500).json({ message: "Terjadi kesalahan server", error: error.message });
+  }
 };
 
-// Login
+// LOGIN
 export const login = async (req, res) => {
-    try {
-        const { username, password } = req.body;
+  const { username, password } = req.body;
 
-        const user = await User.findOne({ where: { username } });
-        if (!user || user.password !== password) {
-            return res.status(401).json({ msg: "Username atau password salah" });
-        }
+  try {
+    const user = await User.findOne({ where: { username } });
 
-        res.status(200).json({ msg: "Login berhasil", user });
-    } catch (error) {
-        res.status(500).json({ msg: "Terjadi kesalahan server", error: error.message });
-    }
+    if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ message: "Password salah" });
+
+    const accessToken = jwt.sign(
+      { id: user.id_user, username: user.username },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id_user, username: user.username },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    await User.update({ refresh_token: refreshToken }, { where: { id_user: user.id_user } });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).json({
+      message: "Login berhasil",
+      accessToken,
+      user: {
+        id_user: user.id_user,
+        username: user.username,
+        email: user.email || null,
+        nickname: user.nickname || null
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Terjadi kesalahan server", error: error.message });
+  }
 };
 
-// Update User
+
+// REFRESH TOKEN
+export const refreshToken = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.sendStatus(401);
+
+    const user = await User.findOne({ where: { refresh_token: token } });
+    if (!user) return res.sendStatus(403);
+
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) return res.sendStatus(403);
+
+      const accessToken = jwt.sign(
+        { id: user.id_user, username: user.username },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "30s" }
+      );
+
+      res.json({ accessToken });
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Terjadi kesalahan server", error: error.message });
+  }
+};
+
+// LOGOUT
+export const logout = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.sendStatus(204);
+
+    const user = await User.findOne({ where: { refresh_token: token } });
+    if (!user) return res.sendStatus(204);
+
+    await User.update({ refresh_token: null }, { where: { id_user: user.id_user } });
+
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({ message: "Logout berhasil" });
+  } catch (error) {
+    res.status(500).json({ message: "Terjadi kesalahan server", error: error.message });
+  }
+};
+
+// UPDATE USER
 export const updateUser = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
 
-        await User.update(req.body, {
-            where: { id_user: req.params.id }
-        });
-        res.status(200).json({ msg: "User berhasil diperbarui" });
-    } catch (error) {
-        res.status(500).json({ msg: "Gagal memperbarui user", error: error.message });
-    }
+    await User.update(req.body, {
+      where: { id_user: req.params.id }
+    });
+    res.status(200).json({ message: "User berhasil diperbarui" });
+  } catch (error) {
+    res.status(500).json({ message: "Gagal memperbarui user", error: error.message });
+  }
 };
 
-// Delete User
+// DELETE USER
 export const deleteUser = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
 
-        await User.destroy({
-            where: { id_user: req.params.id }
-        });
-        res.status(200).json({ msg: "User berhasil dihapus" });
-    } catch (error) {
-        res.status(500).json({ msg: "Gagal menghapus user", error: error.message });
-    }
+    await User.destroy({
+      where: { id_user: req.params.id }
+    });
+    res.status(200).json({ message: "User berhasil dihapus" });
+  } catch (error) {
+    res.status(500).json({ message: "Gagal menghapus user", error: error.message });
+  }
 };
-
-
-// // Get Profile
-// export const getProfile = async (req, res) => {
-//     try {
-//         const user = await User.findByPk(req.params.id);
-//         if (!user) return res.status(404).json({ msg: "Pengguna tidak ditemukan" });
-
-//         res.status(200).json(user);
-//     } catch (error) {
-//         res.status(500).json({ msg: "Terjadi kesalahan server", error: error.message });
-//     }
-// };

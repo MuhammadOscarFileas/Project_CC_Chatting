@@ -12,30 +12,33 @@ const LoginPage = () => {
   const [msg, setMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const response = await axios.post('http://localhost:5000/users/login', {
-        username,
-        password
-      });
-      
-      // Simpan data user di session storage (tanpa token)
-      sessionStorage.setItem('userData', JSON.stringify(response.data.user));
-      
-      setMsg('Login berhasil!');
-      
-      // Redirect ke ChatPage
-      navigate('/chat');
-      
-    } catch (error) {
-      setMsg(error.response?.data?.msg || 'Username/Password salah');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+
+  try {
+    const response = await axios.post('http://localhost:5000/users/login', {
+      username,
+      password
+    });
+
+    const { accessToken, user } = response.data;
+
+    // ✅ Simpan accessToken & user
+    localStorage.setItem('token', accessToken); // token for Authorization header
+    sessionStorage.setItem('userData', JSON.stringify(user)); // user for app logic
+
+    setMsg('Login berhasil!');
+
+    // ✅ Redirect ke ChatPage
+    navigate('/chat');
+  } catch (error) {
+    setMsg(error.response?.data?.message || 'Username/Password salah');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const renderMessage = () => {
     switch (info) {

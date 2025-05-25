@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import db from "./config/database.js";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 // Import routes
 import UserRoute from "./route/UserRoute.js";
 import ContactRoute from "./route/ContactRoute.js";
@@ -10,7 +12,11 @@ import ChatRoute from "./route/ChatRoute.js";
 import "./models/association.js";
 
 const app = express();
+app.set("view engine", "ejs");
+
+dotenv.config();
 const PORT = process.env.PORT || 5000;
+app.use(cookieParser());
 
 // Middleware
 app.use(cors({ origin: "http://localhost:3000" }));

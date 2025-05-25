@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BASE_URL } from "../utils";
 import '../components/chatPage.css';
+import useAuth from '../auth/useAuth';
 // Impor Bootstrap JS dan CSS jika belum ada (atau pastikan sudah di-load global)
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import Modal from 'react-bootstrap/Modal'; // Atau gunakan modal custom / library lain
 
 const ChatPage = () => {
+    const { accessToken, refreshAccessToken } = useAuth();
     const { contactId } = useParams();
     const navigate = useNavigate();
     const [contacts, setContacts] = useState([]);
@@ -33,27 +36,40 @@ const ChatPage = () => {
     const [editError, setEditError] = useState(null); // Error spesifik untuk modal edit
     const [editSuccess, setEditSuccess] = useState(null); // Sukses spesifik untuk modal edit
 
+    console.log("accessToken dari context:", accessToken);
+   // const token = localStorage.getItem('token');
     // 1. Get User Data
-    useEffect(() => {
-        const userData = sessionStorage.getItem('userData');
-        if (!userData) {
-            navigate('/login?info=belum_login');
-            return;
-        }
-        const user = JSON.parse(userData);
-        setCurrentUser(user);
-        // Inisialisasi state edit saat user data dimuat
-        setEditUsername(user.username);
-        setEditEmail(user.email || ''); // Handle jika email null
-        setEditNickname(user.nickname || ''); // Handle jika nickname null
-    }, [navigate]);
+useEffect(() => {
+  const rawData = sessionStorage.getItem('userData');
+  
+
+  if (!rawData || rawData === 'undefined') {
+    navigate('/login?info=belum_login');
+    return;
+  }
+
+  try {
+    const user = JSON.parse(rawData);
+    setCurrentUser(user);
+    setEditUsername(user.username);
+    setEditEmail(user.email || '');
+    setEditNickname(user.nickname || '');
+  } catch (e) {
+    console.error('Data user corrupt:', e);
+    navigate('/login?info=invalid_user');
+  }
+}, [navigate]);
 
     // 2. Fetch Contacts (Tetap sama)
     const fetchContacts = useCallback(async () => {
         if (!currentUser) return;
         try {
             const response = await axios.get(
-                `http://localhost:5000/contacts/${currentUser.id_user}`
+                `http://localhost:5000/contacts/${currentUser.id_user}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
             );
             setContacts(response.data);
             setError(null);
@@ -74,7 +90,11 @@ const ChatPage = () => {
         }
         try {
             const response = await axios.get(
-                `http://localhost:5000/chats/${currentUser.id_user}/${contactId}`
+                `http://localhost:5000/chats/${currentUser.id_user}/${contactId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
             );
             setMessages(response.data);
             setError(null);
@@ -113,7 +133,11 @@ const ChatPage = () => {
                 id_sender: currentUser.id_user,
                 id_receiver: contactId,
                 message: newMessage
-            });
+            }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
             setNewMessage('');
             await fetchMessages();
         } catch (err) {
@@ -139,7 +163,11 @@ const ChatPage = () => {
                 id_user: currentUser.id_user,
                 username: newContactUsername,
                 nickname: newContactNickname
-            });
+            }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
             if (response.status === 201 || response.data.msg.includes("berhasil")) {
                 setNewContactUsername('');
                 setNewContactNickname('');
@@ -198,7 +226,11 @@ const ChatPage = () => {
         try {
             await axios.put(`http://localhost:5000/chats/${messageId}`, {
                 message: editingText
-            });
+            }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
             setEditingMessageId(null);
             setEditingText('');
             await fetchMessages();
@@ -211,7 +243,11 @@ const ChatPage = () => {
     const handleDeleteMessage = async (messageId) => {
         if (window.confirm("Apakah Anda yakin ingin menghapus pesan ini?")) {
             try {
-                await axios.delete(`http://localhost:5000/chats/${messageId}`);
+                await axios.delete(`http://localhost:5000/chats/${messageId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                })
                 await fetchMessages();
             } catch (err) {
                 console.error('Error deleting message:', err);
@@ -237,7 +273,11 @@ const ChatPage = () => {
         try {
             await axios.put(`http://localhost:5000/contacts/contact/${id_contact_to_update}`, {
                 nickname: editingContactNickname
-            });
+            }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
             setEditingContactId(null);
             setEditingContactNickname('');
             await fetchContacts();
@@ -253,7 +293,11 @@ const ChatPage = () => {
 
         if (window.confirm(`Apakah Anda yakin ingin menghapus kontak ${getContactDisplayName(contactToDelete)}?`)) {
             try {
-                await axios.delete(`http://localhost:5000/contacts/contact/${id_contact_to_delete}`);
+                await axios.delete(`http://localhost:5000/contacts/contact/${id_contact_to_delete}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                })
                 await fetchContacts();
                 if (String(user_id_to_delete) === contactId) {
                     navigate('/chat');
@@ -295,7 +339,11 @@ const ChatPage = () => {
         };
 
         try {
-            await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, updatedData);
+            await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, updatedData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
             const updatedUser = { ...currentUser, ...updatedData };
             setCurrentUser(updatedUser);
             sessionStorage.setItem('userData', JSON.stringify(updatedUser));
@@ -323,7 +371,11 @@ const ChatPage = () => {
         try {
             await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, {
                 password: newPassword
-            });
+            }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
             setEditSuccess("Password berhasil diubah!");
             setCurrentPassword('');
             setNewPassword('');
@@ -343,7 +395,11 @@ const ChatPage = () => {
 
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:5000/users/user/${currentUser.id_user}`);
+                await axios.delete(`http://localhost:5000/users/user/${currentUser.id_user}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
                 alert("Akun Anda telah berhasil dihapus.");
                 handleLogout(); // Logout dan redirect
             } catch (err) {
