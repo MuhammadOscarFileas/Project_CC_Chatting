@@ -122,16 +122,26 @@ export const updateContact = async (req, res) => {
 
 // Delete Contact
 export const deleteContact = async (req, res) => {
-    try {
-        const contact = await Contact.findByPk(req.params.id);
-        if (!contact) return res.status(404).json({ msg: "Kontak tidak ditemukan" });
+  try {
+    const id_contact = req.params.id;
 
-        await Contact.destroy({
-            where: { id_contact: req.params.id }
-        });
-        res.status(200).json({ msg: "Kontak berhasil dihapus" });
-    } catch (error) {
-        res.status(500).json({ msg: "Gagal menghapus kontak", error: error.message });
-    }
+    // Cari kontak 1 arah dulu
+    const contact = await Contact.findByPk(id_contact);
+    if (!contact) return res.status(404).json({ msg: "Kontak tidak ditemukan" });
+
+    // Hapus kontak 1 arah
+    await Contact.destroy({ where: { id_contact } });
+
+    // Hapus kontak balikannya (2 arah)
+    await Contact.destroy({
+      where: {
+        id_useradder: contact.id_userreceiver,
+        id_userreceiver: contact.id_useradder
+      }
+    });
+
+    res.status(200).json({ msg: "Kontak dua arah berhasil dihapus" });
+  } catch (error) {
+    res.status(500).json({ msg: "Gagal menghapus kontak", error: error.message });
+  }
 };
-
