@@ -422,7 +422,7 @@ const ChatPage = () => {
                 <div className="col-3 chat-sidebar p-3 d-flex flex-column">
                     <div className="chat-sidebar-header">
                         <img src="/logoo.png" alt="Logo" />
-                        <h5 className="mb-0">Chat Application</h5>
+                        <h5 className="mb-0">Chit Chat</h5>
                     </div>
 
                     <div className="user-profile my-3 text-center">

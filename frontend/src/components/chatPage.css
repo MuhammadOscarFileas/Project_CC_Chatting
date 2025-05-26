@@ -16,7 +16,7 @@ body {
   background: linear-gradient(135deg, var(--light-cyan), var(--non-photo-blue-2));
   height: 100vh;
   margin: 0;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .chat-container {
@@ -120,6 +120,7 @@ body {
 .chat-sidebar .list-group-item:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateX(4px);
+  color: white;
 }
 
 .chat-sidebar .list-group-item.active {
@@ -314,7 +315,7 @@ body {
 .message-footer {
   display: flex;
   align-items: center;
-  font-size: 0.75em;
+  font-size: 0.9em;
   color: rgba(3, 4, 94, 0.6);
   margin: 4px 8px 0;
 }
