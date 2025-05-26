@@ -1,7 +1,9 @@
 import Chat from "../models/chatmodel.js";
+import Contact from "../models/contactmodel.js"; // <-- 1. Tambahkan Impor ini
 import { Op } from "sequelize";
 
 export const sendMessage = async (req, res) => {
+    // ... (kode tetap sama) ...
     try {
         const { id_sender, id_receiver, message } = req.body;
 
@@ -20,6 +22,27 @@ export const getChatsBetweenUsers = async (req, res) => {
     try {
         const { user1, user2 } = req.params;
 
+        // --- 2. Tambahkan Pemeriksaan Kontak Di Sini ---
+        const areContacts = await Contact.findOne({
+            where: {
+                [Op.or]: [
+                    // Cek apakah user1 menambahkan user2 ATAU user2 menambahkan user1
+                    { id_useradder: user1, id_userreceiver: user2 },
+                    { id_useradder: user2, id_userreceiver: user1 }
+                ]
+            }
+        });
+
+        // Jika tidak ada entri kontak sama sekali antara keduanya
+        if (!areContacts) {
+            console.log(`Pemeriksaan Gagal: Tidak ada kontak antara ${user1} dan ${user2}.`);
+            // Kirim 403 Forbidden, karena akses ditolak (bukan lagi kontak)
+            return res.status(403).json({ msg: "Anda tidak dapat melihat chat ini karena Anda bukan lagi kontak." });
+        }
+        // --- Akhir Pemeriksaan Kontak ---
+
+
+        // Jika mereka masih kontak, lanjutkan mengambil pesan
         const messages = await Chat.findAll({
             where: {
                 [Op.or]: [
@@ -31,12 +54,14 @@ export const getChatsBetweenUsers = async (req, res) => {
         });
 
         res.status(200).json(messages);
+
     } catch (error) {
         res.status(500).json({ msg: "Gagal mengambil chat", error: error.message });
     }
 };
 
 export const getLastChat = async (req, res) => {
+    // ... (kode tetap sama, tapi idealnya juga ditambahkan cek kontak) ...
     try {
         const { user1, user2 } = req.params;
 
@@ -58,8 +83,8 @@ export const getLastChat = async (req, res) => {
     }
 };
 
-// Update Chat (edit pesan)
 export const updateChat = async (req, res) => {
+    // ... (kode tetap sama) ...
     try {
         const chat = await Chat.findByPk(req.params.id);
         if (!chat) return res.status(404).json({ msg: "Pesan tidak ditemukan" });
@@ -73,8 +98,8 @@ export const updateChat = async (req, res) => {
     }
 };
 
-// Delete Chat
 export const deleteChat = async (req, res) => {
+    // ... (kode tetap sama) ...
     try {
         const chat = await Chat.findByPk(req.params.id);
         if (!chat) return res.status(404).json({ msg: "Pesan tidak ditemukan" });
