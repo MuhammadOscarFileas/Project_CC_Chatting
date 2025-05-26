@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../utils';
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
@@ -17,7 +18,7 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/users/login', {
+      const response = await axios.post(`${BASE_URL}/users/login`, {
         username,
         password
       });
