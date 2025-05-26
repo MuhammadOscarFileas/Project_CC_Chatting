@@ -65,7 +65,7 @@ const ChatPage = () => {
         if (!currentUser || !accessToken) return;
         try {
             const response = await axios.get(
-                `http://localhost:5000/contacts/${currentUser.id_user}`, {
+                `${BASE_URL}/contacts/${currentUser.id_user}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -90,7 +90,7 @@ const ChatPage = () => {
         }
         try {
             const response = await axios.get(
-                `http://localhost:5000/chats/${currentUser.id_user}/${contactId}`, {
+                `${BASE_URL}/chats/${currentUser.id_user}/${contactId}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -129,7 +129,7 @@ const ChatPage = () => {
         e.preventDefault();
         if (!newMessage.trim() || !contactId || contactId === 'undefined' || !currentUser) return;
         try {
-            await axios.post('http://localhost:5000/chats/send-message', {
+            await axios.post(`${BASE_URL}/chats/send-message`, {
                 id_sender: currentUser.id_user,
                 id_receiver: contactId,
                 message: newMessage
@@ -159,7 +159,7 @@ const ChatPage = () => {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:5000/contacts/add-contact', {
+            const response = await axios.post(`${BASE_URL}/contacts/add-contact`, {
                 id_user: currentUser.id_user,
                 username: newContactUsername,
                 nickname: newContactNickname
@@ -224,7 +224,7 @@ const ChatPage = () => {
     const handleUpdateMessage = async (messageId) => {
         if (!editingText.trim()) return;
         try {
-            await axios.put(`http://localhost:5000/chats/${messageId}`, {
+            await axios.put(`${BASE_URL}/chats/${messageId}`, {
                 message: editingText
             }, {
                 headers: {
@@ -243,7 +243,7 @@ const ChatPage = () => {
     const handleDeleteMessage = async (messageId) => {
         if (window.confirm("Apakah Anda yakin ingin menghapus pesan ini?")) {
             try {
-                await axios.delete(`http://localhost:5000/chats/${messageId}`, {
+                await axios.delete(`${BASE_URL}/chats/${messageId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -271,7 +271,7 @@ const ChatPage = () => {
     const handleUpdateContact = async (id_contact_to_update) => {
         if (!editingContactNickname.trim()) return;
         try {
-            await axios.put(`http://localhost:5000/contacts/contact/${id_contact_to_update}`, {
+            await axios.put(`${BASE_URL}/contacts/contact/${id_contact_to_update}`, {
                 nickname: editingContactNickname
             }, {
                 headers: {
@@ -293,7 +293,7 @@ const ChatPage = () => {
 
         if (window.confirm(`Apakah Anda yakin ingin menghapus kontak ${getContactDisplayName(contactToDelete)}?`)) {
             try {
-                await axios.delete(`http://localhost:5000/contacts/contact/${id_contact_to_delete}`, {
+                await axios.delete(`${BASE_URL}/contacts/contact/${id_contact_to_delete}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -339,7 +339,7 @@ const ChatPage = () => {
         };
 
         try {
-            await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, updatedData, {
+            await axios.put(`${BASE_URL}/users/user/${currentUser.id_user}`, updatedData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -369,7 +369,7 @@ const ChatPage = () => {
         }
 
         try {
-            await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, {
+            await axios.put(`${BASE_URL}/users/user/${currentUser.id_user}`, {
                 password: newPassword
             }, {
                 headers: {
@@ -395,7 +395,7 @@ const ChatPage = () => {
 
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:5000/users/user/${currentUser.id_user}`, {
+                await axios.delete(`${BASE_URL}/users/user/${currentUser.id_user}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
