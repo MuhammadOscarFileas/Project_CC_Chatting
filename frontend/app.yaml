@@ -1,0 +1,14 @@
+runtime: nodejs20
+service: projek-akhir-072-096  # ganti nama service kalau mau
+instance_class: F1
+
+handlers:
+  - url: /
+    static_files: build/index.html
+    upload: build/index.html
+
+  - url: /(.*)
+    static_files: build/\1
+    upload: build/(.*)
+
+default_expiration: "1h"
