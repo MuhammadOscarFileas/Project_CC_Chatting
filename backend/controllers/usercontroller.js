@@ -59,6 +59,8 @@ export const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    console.log(accessToken + ' ' + refreshToken);
+
     await User.update({ refresh_token: refreshToken }, { where: { id_user: user.id_user } });
 
     res.cookie("refreshToken", refreshToken, {
