@@ -37,39 +37,39 @@ const ChatPage = () => {
     const [editSuccess, setEditSuccess] = useState(null); // Sukses spesifik untuk modal edit
 
     console.log("accessToken dari context:", accessToken);
-   // const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
     // 1. Get User Data
-useEffect(() => {
-  const rawData = sessionStorage.getItem('userData');
-  
+    useEffect(() => {
+        const rawData = sessionStorage.getItem('userData');
 
-  if (!rawData || rawData === 'undefined') {
-    navigate('/login?info=belum_login');
-    return;
-  }
 
-  try {
-    const user = JSON.parse(rawData);
-    setCurrentUser(user);
-    setEditUsername(user.username);
-    setEditEmail(user.email || '');
-    setEditNickname(user.nickname || '');
-  } catch (e) {
-    console.error('Data user corrupt:', e);
-    navigate('/login?info=invalid_user');
-  }
-}, [navigate]);
+        if (!rawData || rawData === 'undefined') {
+            navigate('/login?info=belum_login');
+            return;
+        }
+
+        try {
+            const user = JSON.parse(rawData);
+            setCurrentUser(user);
+            setEditUsername(user.username);
+            setEditEmail(user.email || '');
+            setEditNickname(user.nickname || '');
+        } catch (e) {
+            console.error('Data user corrupt:', e);
+            navigate('/login?info=invalid_user');
+        }
+    }, [navigate]);
 
     // 2. Fetch Contacts (Tetap sama)
     const fetchContacts = useCallback(async () => {
-        if (!currentUser|| !accessToken) return;
+        if (!currentUser || !accessToken) return;
         try {
             const response = await axios.get(
                 `http://localhost:5000/contacts/${currentUser.id_user}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
                 }
+            }
             );
             setContacts(response.data);
             setError(null);
@@ -91,10 +91,10 @@ useEffect(() => {
         try {
             const response = await axios.get(
                 `http://localhost:5000/chats/${currentUser.id_user}/${contactId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
                 }
+            }
             );
             setMessages(response.data);
             setError(null);
@@ -106,7 +106,7 @@ useEffect(() => {
     }, [contactId, currentUser]);
 
     // 4. useEffect for Fetch Messages & Polling (Tetap sama)
-     useEffect(() => {
+    useEffect(() => {
         if (!contactId || contactId === 'undefined' || !currentUser) {
             setMessages([]);
             return;
@@ -125,7 +125,7 @@ useEffect(() => {
     }, [messages, editingMessageId]);
 
     // 6. Handle Send Message (Tetap sama)
-     const handleSendMessage = async (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !contactId || contactId === 'undefined' || !currentUser) return;
         try {
@@ -134,10 +134,10 @@ useEffect(() => {
                 id_receiver: contactId,
                 message: newMessage
             }, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             setNewMessage('');
             await fetchMessages();
         } catch (err) {
@@ -149,7 +149,7 @@ useEffect(() => {
 
 
     // 7. Handle Add Contact (Tetap sama)
-     const handleAddContact = async () => {
+    const handleAddContact = async () => {
         if (!newContactUsername.trim()) {
             alert('Username kontak tidak boleh kosong');
             return;
@@ -164,10 +164,10 @@ useEffect(() => {
                 username: newContactUsername,
                 nickname: newContactNickname
             }, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             if (response.status === 201 || response.data.msg.includes("berhasil")) {
                 setNewContactUsername('');
                 setNewContactNickname('');
@@ -191,7 +191,7 @@ useEffect(() => {
     };
 
     // 9. Handle Contact Click (Tetap sama)
-     const handleContactClick = (targetId) => {
+    const handleContactClick = (targetId) => {
         if (targetId === undefined || targetId === null) {
             console.error("GAGAL NAVIGASI: targetId undefined/null.");
             return;
@@ -204,7 +204,7 @@ useEffect(() => {
 
 
     // 10. Get Contact Display Name (Tetap sama)
-     const getContactDisplayName = (contact) => {
+    const getContactDisplayName = (contact) => {
         if (!contact || !contact.user) return 'Unknown';
         return contact.nickname || contact.user.username || 'Unknown';
     };
@@ -227,10 +227,10 @@ useEffect(() => {
             await axios.put(`http://localhost:5000/chats/${messageId}`, {
                 message: editingText
             }, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             setEditingMessageId(null);
             setEditingText('');
             await fetchMessages();
@@ -274,10 +274,10 @@ useEffect(() => {
             await axios.put(`http://localhost:5000/contacts/contact/${id_contact_to_update}`, {
                 nickname: editingContactNickname
             }, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             setEditingContactId(null);
             setEditingContactNickname('');
             await fetchContacts();
@@ -340,10 +340,10 @@ useEffect(() => {
 
         try {
             await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, updatedData, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             const updatedUser = { ...currentUser, ...updatedData };
             setCurrentUser(updatedUser);
             sessionStorage.setItem('userData', JSON.stringify(updatedUser));
@@ -372,10 +372,10 @@ useEffect(() => {
             await axios.put(`http://localhost:5000/users/user/${currentUser.id_user}`, {
                 password: newPassword
             }, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             setEditSuccess("Password berhasil diubah!");
             setCurrentPassword('');
             setNewPassword('');
@@ -418,12 +418,13 @@ useEffect(() => {
     return (
         <div className="chat-container">
             <div className="row h-100 m-0">
-                {/* Sidebar (Tetap sama, sudah ada tombol edit) */}
+                {/* Sidebar dengan desain modern */}
                 <div className="col-3 chat-sidebar p-3 d-flex flex-column">
                     <div className="chat-sidebar-header">
                         <img src="/logoo.png" alt="Logo" />
                         <h5 className="mb-0">Chat Application</h5>
                     </div>
+
                     <div className="user-profile my-3 text-center">
                         <h6>Welcome, {currentUser.username}!</h6>
                         <button className="btn btn-sm btn-outline-light" onClick={handleOpenEditModal}>
@@ -452,7 +453,7 @@ useEffect(() => {
                                                 onChange={(e) => setEditingContactNickname(e.target.value)}
                                             />
                                             <button className="btn btn-sm btn-success me-1" onClick={() => handleUpdateContact(contact.id_contact)}>✓</button>
-                                            <button className="btn btn-sm btn-secondary" onClick={handleContactCancelEdit}>X</button>
+                                            <button className="btn btn-sm btn-secondary" onClick={handleContactCancelEdit}>✗</button>
                                         </div>
                                     ) : (
                                         <div className={`list-group-item list-group-item-action ${isActive ? 'active' : ''}`}>
@@ -462,7 +463,7 @@ useEffect(() => {
                                                 </h6>
                                                 <div className="contact-actions">
                                                     <button title="Edit Nickname" onClick={() => handleContactEditClick(contact)}>✏️</button>
-                                                    <button title="Hapus Kontak" onClick={() => handleDeleteContact(contact)}>🗑️</button>
+                                                    <button title="Delete Contact" onClick={() => handleDeleteContact(contact)}>🗑️</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -471,144 +472,152 @@ useEffect(() => {
                             );
                         })}
                     </div>
+
+                    {/* Add Contact Section - Tanpa tombol Files dan Images */}
                     <div className="add-contact mt-3">
-                         <div className="input-group mb-2">
-                             <input
-                                 type="text"
-                                 className="form-control"
-                                 placeholder="Enter username"
-                                 value={newContactUsername}
-                                 onChange={(e) => setNewContactUsername(e.target.value)}
-                             />
-                         </div>
-                         <div className="input-group mb-2">
-                             <input
-                                 type="text"
-                                 className="form-control"
-                                 placeholder="Enter nickname (optional)"
-                                 value={newContactNickname}
-                                 onChange={(e) => setNewContactNickname(e.target.value)}
-                             />
-                         </div>
-                         <button
-                             className="btn btn-primary w-100"
-                             type="button"
-                             onClick={handleAddContact}
-                         >
-                             Add Contact
-                         </button>
+                        <div className="input-group mb-2">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter username"
+                                value={newContactUsername}
+                                onChange={(e) => setNewContactUsername(e.target.value)}
+                            />
+                        </div>
+                        <div className="input-group mb-2">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter nickname (optional)"
+                                value={newContactNickname}
+                                onChange={(e) => setNewContactNickname(e.target.value)}
+                            />
+                        </div>
+                        <button
+                            className="btn btn-primary w-100"
+                            type="button"
+                            onClick={handleAddContact}
+                        >
+                            Add Contact
+                        </button>
                     </div>
-                    <div className="chat-sidebar-footer mt-3">
-                        <a href="/files">📁 Files</a>
-                        <a href="/images">🖼️ Images</a>
-                    </div>
+
+                    {/* Logout Button - Files dan Images dihapus */}
                     <button className="btn btn-danger mt-3" onClick={handleLogout}>
                         Logout
                     </button>
                 </div>
 
-                {/* Chat Content (Tetap sama) */}
+                {/* Chat Content dengan desain modern */}
                 <div className="col chat-content">
                     <div className="d-flex flex-column h-100">
-                         <div className="chat-messages flex-grow-1 overflow-auto p-3">
-                             {error && <div className="alert alert-danger">{error}</div>}
-                             {contactId && contactId !== 'undefined' ? (
-                                 messages.length > 0 ? (
-                                     messages.map((message) => {
-                                         const isMyMessage = message.id_sender === currentUser.id_user;
-                                         const isEditing = editingMessageId === message.id_chat;
+                        <div className="chat-messages flex-grow-1 overflow-auto p-3">
+                            {error && <div className="alert alert-danger">{error}</div>}
+                            {contactId && contactId !== 'undefined' ? (
+                                messages.length > 0 ? (
+                                    messages.map((message) => {
+                                        const isMyMessage = message.id_sender === currentUser.id_user;
+                                        const isEditing = editingMessageId === message.id_chat;
 
-                                         return (
-                                             <div
-                                                 key={message.id_chat}
-                                                 className={`chat-message ${isMyMessage ? 'sent' : ''}`}
-                                             >
-                                                 {isEditing ? (
-                                                     <div className="message-bubble edit-mode">
-                                                         <textarea
-                                                             className="form-control mb-1"
-                                                             value={editingText}
-                                                             onChange={(e) => setEditingText(e.target.value)}
-                                                         />
-                                                         <button
-                                                             className="btn btn-sm btn-success me-1"
-                                                             onClick={() => handleUpdateMessage(message.id_chat)}
-                                                         >
-                                                             Simpan
-                                                         </button>
-                                                         <button
-                                                             className="btn btn-sm btn-secondary"
-                                                             onClick={handleCancelEdit}
-                                                         >
-                                                             Batal
-                                                         </button>
-                                                     </div>
-                                                 ) : (
-                                                     <div className="message-bubble">
-                                                         {message.message}
-                                                     </div>
-                                                 )}
-                                                 <div className="message-footer">
-                                                     {isMyMessage && !isEditing && (
-                                                         <div className="message-actions-bottom">
-                                                             <button onClick={() => handleEditClick(message)}>
-                                                                 Edit
-                                                             </button>
-                                                             <span>·</span>
-                                                             <button onClick={() => handleDeleteMessage(message.id_chat)}>
-                                                                 Hapus
-                                                             </button>
-                                                             <span>·</span>
-                                                         </div>
-                                                     )}
-                                                     <small>{new Date(message.timestamp).toLocaleString()}</small>
-                                                 </div>
-                                             </div>
-                                         );
-                                     })
-                                 ) : (
-                                     <div className="text-center mt-5">
-                                         {!error && "Belum ada pesan."}
-                                     </div>
-                                 )
-                             ) : (
-                                 <div className="text-center mt-5">
-                                     Pilih kontak untuk memulai chat.
-                                 </div>
-                             )}
-                             <div ref={messagesEndRef} />
-                         </div>
+                                        return (
+                                            <div
+                                                key={message.id_chat}
+                                                className={`chat-message ${isMyMessage ? 'sent' : ''}`}
+                                            >
+                                                {isEditing ? (
+                                                    <div className="message-bubble edit-mode">
+                                                        <textarea
+                                                            className="form-control mb-2"
+                                                            value={editingText}
+                                                            onChange={(e) => setEditingText(e.target.value)}
+                                                        />
+                                                        <div className="d-flex gap-2">
+                                                            <button
+                                                                className="btn btn-sm btn-success"
+                                                                onClick={() => handleUpdateMessage(message.id_chat)}
+                                                            >
+                                                                Save
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-secondary"
+                                                                onClick={handleCancelEdit}
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="message-bubble">
+                                                        {message.message}
+                                                    </div>
+                                                )}
+                                                <div className="message-footer">
+                                                    {isMyMessage && !isEditing && (
+                                                        <div className="message-actions-bottom">
+                                                            <button onClick={() => handleEditClick(message)}>
+                                                                Edit
+                                                            </button>
+                                                            <span>·</span>
+                                                            <button onClick={() => handleDeleteMessage(message.id_chat)}>
+                                                                Delete
+                                                            </button>
+                                                            <span>·</span>
+                                                        </div>
+                                                    )}
+                                                    <small>{new Date(message.timestamp).toLocaleString()}</small>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="text-center mt-5">
+                                        <div className="d-flex flex-column align-items-center">
+                                            <div className="mb-3" style={{ fontSize: '3rem', opacity: 0.3 }}>💬</div>
+                                            <p className="text-muted">No messages yet. Start a conversation!</p>
+                                        </div>
+                                    </div>
+                                )
+                            ) : (
+                                <div className="text-center mt-5">
+                                    <div className="d-flex flex-column align-items-center">
+                                        <div className="mb-3" style={{ fontSize: '3rem', opacity: 0.3 }}>👋</div>
+                                        <p className="text-muted">Select a contact to start chatting</p>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
 
-                         {/* Message Input */}
-                         {contactId && contactId !== 'undefined' && (
-                             <div className="chat-input mt-auto p-3">
-                                 <form onSubmit={handleSendMessage} className="d-flex">
-                                     <textarea
-                                         className="form-control flex-grow-1 me-2"
-                                         placeholder="Type your message..."
-                                         value={newMessage}
-                                         onChange={(e) => setNewMessage(e.target.value)}
-                                         required
-                                         rows="1"
-                                         style={{ resize: 'none' }}
-                                         onKeyPress={(e) => {
-                                             if (e.key === 'Enter' && !e.shiftKey) {
-                                                 e.preventDefault();
-                                                 handleSendMessage(e);
-                                             }
-                                         }}
-                                     />
-                                     <button type="submit" className="btn btn-primary">
-                                         Send
-                                     </button>
-                                 </form>
-                             </div>
-                         )}
-                     </div>
+                        {/* Message Input dengan desain modern */}
+                        {contactId && contactId !== 'undefined' && (
+                            <div className="chat-input mt-auto p-3">
+                                <form onSubmit={handleSendMessage} className="d-flex">
+                                    <textarea
+                                        className="form-control flex-grow-1 me-2"
+                                        placeholder="Type your message..."
+                                        value={newMessage}
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        required
+                                        rows="1"
+                                        style={{ resize: 'none' }}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSendMessage(e);
+                                            }
+                                        }}
+                                    />
+                                    <button type="submit" className="btn btn-primary">
+                                        Send
+                                    </button>
+                                </form>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* --- Modal Edit Profil (Dengan Tambahan Tombol Delete) --- */}
+            {/* Modal Edit Profile dengan styling modern */}
             {showEditProfileModal && (
                 <div className="modal show" style={{ display: 'block' }} tabIndex="-1">
                     <div className="modal-dialog">
@@ -623,8 +632,7 @@ useEffect(() => {
 
                                 {/* Form Edit User Info */}
                                 <form onSubmit={handleUpdateProfile}>
-                                    {/* ... Input Username, Email, Nickname (Tetap sama) ... */}
-                                    <h6>Update Info</h6>
+                                    <h6 className="mb-3">Update Info</h6>
                                     <div className="mb-3">
                                         <label htmlFor="editUsername" className="form-label">Username</label>
                                         <input
@@ -664,8 +672,7 @@ useEffect(() => {
 
                                 {/* Form Edit Password */}
                                 <form onSubmit={handleChangePassword}>
-                                    {/* ... Input Password (Tetap sama) ... */}
-                                     <h6>Change Password</h6>
+                                    <h6 className="mb-3">Change Password</h6>
                                     <div className="mb-3">
                                         <label htmlFor="newPassword" className="form-label">New Password</label>
                                         <input
@@ -693,10 +700,10 @@ useEffect(() => {
 
                                 <hr />
 
-                                {/* --- Area Berbahaya: Hapus Akun --- */}
+                                {/* Danger Zone */}
                                 <div className="danger-zone mt-4 p-3 border border-danger rounded">
                                     <h6 className="text-danger">Danger Zone</h6>
-                                    <p className="small">Menghapus akun Anda bersifat permanen dan tidak dapat dibatalkan.</p>
+                                    <p className="small text-muted">Deleting your account is permanent and cannot be undone.</p>
                                     <button
                                         type="button"
                                         className="btn btn-danger"
@@ -714,8 +721,8 @@ useEffect(() => {
                     </div>
                 </div>
             )}
-             {/* Backdrop untuk modal */}
-             {showEditProfileModal && <div className="modal-backdrop fade show"></div>}
+            {/* Backdrop untuk modal */}
+            {showEditProfileModal && <div className="modal-backdrop fade show"></div>}
         </div>
     );
 };
