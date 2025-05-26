@@ -77,7 +77,7 @@ const ChatPage = () => {
             console.error('Error fetching contacts:', err);
             setError('Gagal memuat kontak.');
         }
-    }, [currentUser]);
+    }, [currentUser, accessToken]);
 
     useEffect(() => {
         fetchContacts();
@@ -85,7 +85,7 @@ const ChatPage = () => {
 
     // 3. Fetch Messages (Tetap sama)
     const fetchMessages = useCallback(async () => {
-        if (!contactId || contactId === 'undefined' || !currentUser) {
+        if (!contactId || contactId === 'undefined' || !currentUser || !accessToken) {
             return;
         }
         try {
@@ -100,10 +100,15 @@ const ChatPage = () => {
             setError(null);
         } catch (err) {
             console.error(`Error fetching messages:`, err);
-            setMessages([]);
-            setError('Gagal memuat pesan.');
+            if (err.response && (err.response.status === 403 || err.response.status === 404)) {
+                alert("Kontak ini tidak lagi tersedia atau telah menghapus Anda.");
+                navigate('/chat');
+            } else {
+                setMessages([]);
+                setError('Gagal memuat pesan.');
+            }
         }
-    }, [contactId, currentUser]);
+    }, [contactId, currentUser, accessToken, navigate]);
 
     // 4. useEffect for Fetch Messages & Polling (Tetap sama)
     useEffect(() => {
@@ -123,6 +128,22 @@ const ChatPage = () => {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages, editingMessageId]);
+
+    useEffect(() => {
+        // Hanya jalankan jika contactId ada DAN daftar contacts sudah dimuat
+        if (contactId && contactId !== 'undefined' && contacts.length > 0) {
+            const isContactStillValid = contacts.some(
+                contact => contact.user && String(contact.user.id_user) === contactId
+            );
+
+            // Jika TIDAK valid (tidak ditemukan di daftar)
+            if (!isContactStillValid) {
+                console.warn(`Kontak ${contactId} tidak lagi valid di frontend. Navigasi kembali.`);
+                alert("Kontak yang Anda pilih tidak lagi tersedia.");
+                navigate('/chat');
+            }
+        }
+    }, [contactId, contacts, navigate]);
 
     // 6. Handle Send Message (Tetap sama)
     const handleSendMessage = async (e) => {
@@ -289,7 +310,9 @@ const ChatPage = () => {
 
     const handleDeleteContact = async (contactToDelete) => {
         const id_contact_to_delete = contactToDelete.id_contact;
-        const user_id_to_delete = contactToDelete.user.id_user;
+        const user_id_to_delete = contactToDelete.user.id_user?.id_user;
+
+        if (!user_id_to_delete || !accessToken) return;
 
         if (window.confirm(`Apakah Anda yakin ingin menghapus kontak ${getContactDisplayName(contactToDelete)}?`)) {
             try {
