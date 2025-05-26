@@ -1,8 +1,9 @@
 // src/api/axiosInstance.js
 import axios from "axios";
+import { BASE_URL } from "../utils";
 
 const instance = axios.create({
-  baseURL: "https://localhost:5000", // Ganti dengan base URL backend-mu
+  baseURL: `${BASE_URL}`, // Ganti dengan base URL backend-mu
   withCredentials: true, // untuk kirim cookie kalau dibutuhkan
 });
 
