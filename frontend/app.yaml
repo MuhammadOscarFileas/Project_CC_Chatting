@@ -1,14 +1,19 @@
 runtime: nodejs20
-service: projek-akhir-072-096  # ganti nama service kalau mau
+service: projek-akhir-072-096 # Nama service Anda
 instance_class: F1
 
 handlers:
-  - url: /
+  # 1. Sajikan file statis yang sebenarnya ADA (JS, CSS, Gambar, dll.)
+  #    Pastikan ekstensi yang Anda gunakan ada di sini.
+  - url: /(.*\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt))$
+    static_files: build/\1
+    upload: build/(.*\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt))$
+
+  # 2. Untuk SEMUA URL LAINNYA (termasuk / dan /register), sajikan index.html
+  #    Ini adalah 'catch-all' untuk SPA.
+  - url: /.*
     static_files: build/index.html
     upload: build/index.html
 
-  - url: /(.*)
-    static_files: build/\1
-    upload: build/(.*)
-
-default_expiration: "1h"
+# Opsional: Atur caching jika perlu
+# default_expiration: "1h"
