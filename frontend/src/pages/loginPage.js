@@ -12,32 +12,32 @@ const LoginPage = () => {
   const [msg, setMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  try {
-    const response = await axios.post('http://localhost:5000/users/login', {
-      username,
-      password
-    });
+    try {
+      const response = await axios.post('http://localhost:5000/users/login', {
+        username,
+        password
+      });
 
-    const { accessToken, user } = response.data;
+      const { accessToken, user } = response.data;
 
-    // ✅ Simpan accessToken & user
-    localStorage.setItem('token', accessToken); // token for Authorization header
-    sessionStorage.setItem('userData', JSON.stringify(user)); // user for app logic
+      // ✅ Simpan accessToken & user
+      localStorage.setItem('token', accessToken); // token for Authorization header
+      sessionStorage.setItem('userData', JSON.stringify(user)); // user for app logic
 
-    setMsg('Login berhasil!');
+      setMsg('Login berhasil!');
 
-    // ✅ Redirect ke ChatPage
-    navigate('/chat');
-  } catch (error) {
-    setMsg(error.response?.data?.message || 'Username/Password salah');
-  } finally {
-    setIsLoading(false);
-  }
-};
+      // ✅ Redirect ke ChatPage
+      navigate('/chat');
+    } catch (error) {
+      setMsg(error.response?.data?.message || 'Username/Password salah');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   const renderMessage = () => {
@@ -55,8 +55,8 @@ const handleLogin = async (e) => {
   };
 
   return (
-    <div className="min-vh-100 d-flex align-items-center" style={{ 
-      fontFamily: 'Poppins, sans-serif', 
+    <div className="min-vh-100 d-flex align-items-center" style={{
+      fontFamily: 'Poppins, sans-serif',
       background: 'linear-gradient(135deg, #03045e 0%, #0077b6 50%, #48cae4 100%)'
     }}>
       <div className="container">
@@ -85,13 +85,12 @@ const handleLogin = async (e) => {
             <div className="d-flex justify-content-center align-items-center min-vh-100 py-4">
               <div className="login-card w-100" style={{ maxWidth: '450px' }}>
                 <div className="card border-0 shadow-lg rounded-4 overflow-hidden"
-                     style={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
+                  style={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
                   <div className="card-body p-5">
                     {/* Logo and Title */}
                     <div className="text-center mb-4">
-                      <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-                           style={{ width: '80px', height: '80px', background: 'linear-gradient(135deg, #023e8a, #0077b6)' }}>
-                        <i className="fas fa-comments text-white" style={{ fontSize: '2rem' }}></i>
+                      <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
+                        <img src="/logoo.png" alt="Logo" height={80}/>
                       </div>
                       <h2 className="fw-bold mb-2" style={{ color: '#03045e' }}>Welcome Back</h2>
                       <p className="text-muted">Sign in to continue to your chat</p>
@@ -99,8 +98,8 @@ const handleLogin = async (e) => {
 
                     {/* Alert Messages */}
                     {renderMessage() && (
-                      <div className="alert alert-warning border-0 rounded-3 mb-4" 
-                           style={{ backgroundColor: '#ade8f4', color: '#023e8a' }}>
+                      <div className="alert alert-warning border-0 rounded-3 mb-4"
+                        style={{ backgroundColor: '#ade8f4', color: '#023e8a' }}>
                         <i className="fas fa-exclamation-triangle me-2"></i>
                         {renderMessage()}
                       </div>
@@ -108,13 +107,13 @@ const handleLogin = async (e) => {
 
                     {/* Login Form */}
                     <form onSubmit={handleLogin}>
-                      <div className="mb-4">
+                      <div className="mt-5 mb-4">
                         <label htmlFor="username" className="form-label fw-medium" style={{ color: '#03045e' }}>
                           Username/Email
                         </label>
                         <div className="input-group">
-                          <span className="input-group-text border-0 rounded-start-3" 
-                                style={{ backgroundColor: '#caf0f8', color: '#023e8a' }}>
+                          <span className="input-group-text border-0 rounded-start-3"
+                            style={{ backgroundColor: '#caf0f8', color: '#023e8a' }}>
                             <i className="fas fa-user"></i>
                           </span>
                           <input
@@ -135,8 +134,8 @@ const handleLogin = async (e) => {
                           Password
                         </label>
                         <div className="input-group">
-                          <span className="input-group-text border-0 rounded-start-3" 
-                                style={{ backgroundColor: '#caf0f8', color: '#023e8a' }}>
+                          <span className="input-group-text border-0 rounded-start-3"
+                            style={{ backgroundColor: '#caf0f8', color: '#023e8a' }}>
                             <i className="fas fa-lock"></i>
                           </span>
                           <input
@@ -152,10 +151,10 @@ const handleLogin = async (e) => {
                         </div>
                       </div>
 
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className="btn w-100 py-3 rounded-3 fw-medium mb-4"
-                        style={{ 
+                        style={{
                           background: 'linear-gradient(135deg, #0077b6, #00b4d8)',
                           border: 'none',
                           color: 'white',
@@ -184,9 +183,9 @@ const handleLogin = async (e) => {
                     {/* Register Link */}
                     <div className="text-center">
                       <p className="mb-0" style={{ color: '#6c757d' }}>
-                        Don't have an account? 
-                        <a href="/register" className="text-decoration-none fw-medium ms-2" 
-                           style={{ color: '#0077b6' }}>
+                        Don't have an account?
+                        <a href="/register" className="text-decoration-none fw-medium ms-2"
+                          style={{ color: '#0077b6' }}>
                           Create Account
                         </a>
                       </p>

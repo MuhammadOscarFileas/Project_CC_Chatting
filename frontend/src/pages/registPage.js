@@ -72,9 +72,8 @@ const Register = () => {
                   <div className="card-body p-5">
                     {/* Logo and Title */}
                     <div className="text-center mb-4">
-                      <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-                           style={{ width: '80px', height: '80px', background: 'linear-gradient(135deg, #023e8a, #0077b6)' }}>
-                        <i className="fas fa-user-plus text-white" style={{ fontSize: '2rem' }}></i>
+                      <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
+                        <img src="/logoo.png" alt="Logo" height={80}/>
                       </div>
                       <h2 className="fw-bold mb-2" style={{ color: '#03045e' }}>Create Account</h2>
                       <p className="text-muted">Join us and start chatting today</p>
