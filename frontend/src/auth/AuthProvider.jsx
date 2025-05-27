@@ -9,6 +9,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     const [accessToken, setAccessToken] = useState(() => localStorage.getItem("token") || null);
     const [user, setUser] = useState(() => {
         const userData = sessionStorage.getItem('userData');
@@ -43,6 +44,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 =======
+=======
+>>>>>>> parent of 97828c2 (debugging token pas login)
   const [accessToken, setAccessToken] = useState(() => {
     return localStorage.getItem("token") || null;
   });
