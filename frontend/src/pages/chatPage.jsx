@@ -310,8 +310,9 @@ const ChatPage = () => {
 
     const handleDeleteContact = async (contactToDelete) => {
         const id_contact_to_delete = contactToDelete.id_contact;
-        const user_id_to_delete = contactToDelete.user.id_user;
+        const user_id_to_delete = contactToDelete.user.id_user?.id_user;
 
+        if (!user_id_to_delete || !accessToken) return;
 
         if (window.confirm(`Apakah Anda yakin ingin menghapus kontak ${getContactDisplayName(contactToDelete)}?`)) {
             try {
