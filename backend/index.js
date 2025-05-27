@@ -23,16 +23,18 @@ app.use(cookieParser());
 const allowedOrigins = ['https://projek-akhir-072-096-dot-f-07-450706.uc.r.appspot.com'];
 const corsOptions = {
     origin: function (origin, callback) {
+        // Izinkan request tanpa origin (seperti dari Postman atau mobile apps)
+        // atau jika origin ada di dalam daftar allowedOrigins
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true, // <-- WAJIB: Izinkan cookies/credentials
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // <-- WAJIB: Izinkan metode
-    allowedHeaders: 'Content-Type,Authorization', // <-- WAJIB: Izinkan header
-    optionsSuccessStatus: 204
+    credentials: true, // <-- WAJIB: untuk mengizinkan pengiriman cookies/credentials
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // <-- WAJIB: metode yang diizinkan
+    allowedHeaders: 'Content-Type,Authorization', // <-- WAJIB: header yang diizinkan
+    optionsSuccessStatus: 204 // Untuk browser lama
 };
 
 app.use(cors(corsOptions)); // Terapkan konfigurasi lengkap
