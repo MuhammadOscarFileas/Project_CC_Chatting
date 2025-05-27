@@ -65,7 +65,9 @@ export const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === 'production', // <-- TAMBAHKAN INI
+      sameSite: 'Strict'
     });
 
     res.status(200).json({
