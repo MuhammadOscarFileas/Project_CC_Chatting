@@ -8,9 +8,28 @@ import { BASE_URL } from "../utils.js";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [accessToken, setAccessToken] = useState(() => {
-    return localStorage.getItem("token") || null;
+  const [accessToken, setAccessToken] = useState(() => localStorage.getItem("token") || null);
+  // Tambahkan state untuk user
+  const [user, setUser] = useState(() => {
+      const userData = sessionStorage.getItem('userData');
+      return userData ? JSON.parse(userData) : null;
   });
+
+// Fungsi BARU untuk mengatur state setelah login
+  const setAuthState = (newAccessToken, newUser, newRefreshToken) => {
+      setAccessToken(newAccessToken); // <<< PENTING: Update state context
+      setUser(newUser);             // <<< PENTING: Update state context
+      localStorage.setItem("token", newAccessToken);
+      sessionStorage.setItem('userData', JSON.stringify(newUser)); // Simpan user data
+
+      if (newRefreshToken) {
+          Cookies.set("refreshToken", newRefreshToken, {
+              secure: true,
+              sameSite: "Strict",
+              expires: 5,
+          });
+      }
+  };
 
   const login = async (username, password) => {
     try {
@@ -36,7 +55,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setAccessToken(null);
+    setUser(null); // Reset user state
     localStorage.removeItem("token");
+    sessionStorage.removeItem("userData");
     Cookies.remove("refreshToken");
   };
 
@@ -58,7 +79,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, login, logout, refreshAccessToken }}
+      value={{ accessToken, user, login, logout, refreshAccessToken, setAuthState}}
     >
       {children}
     </AuthContext.Provider>
