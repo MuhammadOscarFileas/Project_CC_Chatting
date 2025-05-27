@@ -19,8 +19,24 @@ const PORT = process.env.PORT || 5000;
 app.use(cookieParser());
 
 // Middleware
-app.use(cors({ origin: "https://projek-akhir-072-096-dot-f-07-450706.uc.r.appspot.com" }));
-app.use(express.json());
+// --- KONFIGURASI CORS YANG BENAR ---
+const allowedOrigins = ['https://projek-akhir-072-096-dot-f-07-450706.uc.r.appspot.com'];
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // <-- WAJIB: Izinkan cookies/credentials
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // <-- WAJIB: Izinkan metode
+    allowedHeaders: 'Content-Type,Authorization', // <-- WAJIB: Izinkan header
+    optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions)); // Terapkan konfigurasi lengkap
+// --- AKHIR KONFIGURASI CORS ---
 
 // Routing
 app.use("/users", UserRoute);
