@@ -2,13 +2,11 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../utils';
-import useAuth from '../auth/useAuth';
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
   const info = searchParams.get("info");
   const navigate = useNavigate();
-  const { setAuthState } = useAuth(); // <<< Dapatkan fungsi setAuthState
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -25,12 +23,11 @@ const LoginPage = () => {
         password
       });
 
-      const { accessToken, user, refreshToken } = response.data;
+      const { accessToken, user } = response.data;
 
       // ✅ Simpan accessToken & user
-      // localStorage.setItem('token', accessToken); // token for Authorization header
-      // sessionStorage.setItem('userData', JSON.stringify(user)); // user for app logic
-      setAuthState(accessToken, user, refreshToken);
+      localStorage.setItem('token', accessToken); // token for Authorization header
+      sessionStorage.setItem('userData', JSON.stringify(user)); // user for app logic
 
       setMsg('Login berhasil!');
 

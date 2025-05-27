@@ -8,6 +8,7 @@ import { BASE_URL } from "../utils.js";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+<<<<<<< HEAD
     const [accessToken, setAccessToken] = useState(() => localStorage.getItem("token") || null);
     const [user, setUser] = useState(() => {
         const userData = sessionStorage.getItem('userData');
@@ -41,6 +42,16 @@ export const AuthProvider = ({ children }) => {
             return false;
         }
     };
+=======
+  const [accessToken, setAccessToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
+
+  const login = async (username, password) => {
+    try {
+      const res = await axios.post(`${BASE_URL}/login`, { username, password });
+      const token = res.data.accessToken;
+>>>>>>> parent of 97828c2 (debugging token pas login)
 
     const logout = async () => { // Jadikan async jika ada operasi async di dalamnya
         try {
@@ -87,11 +98,19 @@ export const AuthProvider = ({ children }) => {
             (error) => Promise.reject(error)
         );
 
+<<<<<<< HEAD
         // Interceptor untuk Response
         const responseIntercept = axios.interceptors.response.use(
             (response) => response, // Jika sukses, langsung kembalikan
             async (error) => {
                 const originalRequest = error.config;
+=======
+  const logout = () => {
+    setAccessToken(null);
+    localStorage.removeItem("token");
+    Cookies.remove("refreshToken");
+  };
+>>>>>>> parent of 97828c2 (debugging token pas login)
 
                 // Cek apakah error 401 dan BUKAN request refresh token itu sendiri
                 // dan request belum pernah dicoba ulang
@@ -125,6 +144,7 @@ export const AuthProvider = ({ children }) => {
         };
     }, []); // Dependensi kosong agar hanya dijalankan sekali saat mount dan dibersihkan saat unmount
 
+<<<<<<< HEAD
     // --- AKHIR SETUP INTERCEPTOR ---
 
     return (
@@ -134,6 +154,15 @@ export const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
+=======
+  return (
+    <AuthContext.Provider
+      value={{ accessToken, login, logout, refreshAccessToken }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+>>>>>>> parent of 97828c2 (debugging token pas login)
 };
 
 AuthProvider.propTypes = {

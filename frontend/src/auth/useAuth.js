@@ -3,15 +3,13 @@
 import { useAuthContext } from "./AuthProvider";
 
 const useAuth = () => {
-  const { accessToken, user, login, logout, refreshAccessToken, setAuthState } = useAuthContext();
+  const { accessToken, login, logout, refreshAccessToken } = useAuthContext();
 
   return {
     accessToken,
-    user,
     login,
     logout,
     refreshAccessToken,
-    setAuthState,
     isAuthenticated: !!accessToken,
   };
 };
